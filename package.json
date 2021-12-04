@@ -1,0 +1,19 @@
+{
+    "name": "belajar-nodejs",
+    "version": "1.0.0",
+    "description": "belajar membuat CI clode versi NodeJS",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Jefri Herdi Triyanto",
+    "license": "ISC",
+    "dependencies": {
+        "ejs": "^3.1.6",
+        "express": "^4.17.1",
+        "helmet": "^4.6.0",
+        "mongodb": "^4.2.1",
+        "morgan": "^1.10.0",
+        "socket.io": "^4.4.0"
+    }
+}
