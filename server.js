@@ -1,3 +1,7 @@
+console.log('\033[2J'); // clear CLI
+
+require("dotenv").config()
+
 // ======================== App ========================
 // Webserver
 const {
@@ -8,11 +12,12 @@ const {
 // Web Socket
 // const io = require('./app/websocket')(app, webserver)
 
-// ======================== Middlewares ========================
-require("./middlewares")(app)
 
-// ======================== Routes ========================
-// add routes from file name
-require("./routes")(app, [
-    "./website",
-])
+
+
+// ======================== Test Area ========================
+
+async function run() {
+
+}
+run()

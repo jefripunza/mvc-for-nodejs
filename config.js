@@ -1,16 +1,4 @@
-const os = require('os');
-
-let networkInterfaces = os.networkInterfaces()
-let onlyNetwork = [
-    "Wi-Fi",
-].map(network => {
-    return networkInterfaces[network].filter(select => {
-        return select.family === "IPv4"
-    })
-})[0];
-
-// console.log({ networkInterfaces });
-// console.log({ onlyNetwork });
+const local_ip = Object.values(require('os').networkInterfaces()).map(device => device.filter(ip => ip.family === "IPv4")[0].address).filter(ip => String(ip).startsWith("192.168."))[0]
 
 const env = process.env.NODE_ENV
 const isProduction = env === "production"
@@ -19,10 +7,8 @@ const app = {
     app_name: "NodeJS MVC Example",
     port: process.env.PORT || 5000,
     host: "0.0.0.0",
-    networkInterfaces: onlyNetwork,
+    local_ip,
 }
-
-console.log(app.networkInterfaces[0].address);
 
 const website = {
     add_title: " | " + app.app_name,

@@ -1,7 +1,10 @@
-const config = require('../../config');
+if (process.env.MONGODB_URL === undefined) {
+    console.log("please fill in the MongoDB URL in .env file !");
+    process.exit(1);
+}
 
-const { MongoClient } = require("mongodb");
-const mdb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const { MongoClient, ObjectId } = require("mongodb");
+const mdb = new MongoClient(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 mdb.connect((error, client) => {
     if (error) {
         console.log("Error connecting to MongoDB! ", { error });
@@ -11,7 +14,27 @@ mdb.connect((error, client) => {
     client.close();
 });
 
-
+/**
+ * 
+ * @param {*} callback 
+ * @param {boolean} debug 
+ * @returns 
+ */
+async function MongoConnect(callback, debug = false) {
+    const mongodb = new MongoClient(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+    try {
+        await mongodb.connect();
+        if (debug)
+            console.log("MongoDB Connected...")
+        //
+        return await callback(mongodb);
+    } finally {
+        // Ensures that the mongodb will close when you finish/error
+        await mongodb.close();
+        if (debug)
+            console.log("MongoDB Closed...")
+    }
+}
 
 /**
  * 
@@ -21,11 +44,8 @@ mdb.connect((error, client) => {
  * @returns 
  */
 async function insertDocument(database, collection, new_data) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
-        const coll = monggodb.db(database).collection(collection);
+    return await MongoConnect(async mongodb => {
+        const coll = mongodb.db(database).collection(collection);
         if (
             typeof new_data === 'object' &&
             Array.isArray(new_data) &&
@@ -35,31 +55,25 @@ async function insertDocument(database, collection, new_data) {
         } else {
             return await coll.insertOne(new_data);
         }
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 /**
  * 
  * @param {String} database select database target
- * @param {Array} collection target collection yang ingin di input (array)
+ * @param {[]} array_collection list target collection yang ingin di tampilkan
  * @returns 
  */
 async function showCollection(database, array_collection) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
+    return await MongoConnect(async mongodb => {
         const save = {};
         for (i in array_collection) {
-            const coll = await monggodb.db(database).collection(array_collection[i]);
+            const coll = await mongodb.db(database).collection(array_collection[i]);
             const result = await coll.find().toArray();
             save[array_collection[i]] = result;
             // global[array_collection[i]] = result;
         }
-        const coll = await monggodb.db("server").collection("system");
+        const coll = await mongodb.db("server").collection("system");
         const system = await coll.find().toArray();
         save["system"] = system
             .filter(data => {
@@ -69,11 +83,11 @@ async function showCollection(database, array_collection) {
                 delete data.database
                 return data
             })[0];
+        if (!save["system"]) {
+            delete save["system"]
+        }
         return save;
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 /**
@@ -84,18 +98,12 @@ async function showCollection(database, array_collection) {
  * @returns 
  */
 async function showDocumentByID(database, collection, _id) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
-        const coll = monggodb.db(database).collection(collection);
+    return await MongoConnect(async mongodb => {
+        const coll = mongodb.db(database).collection(collection);
         return await coll.find({
-            _id: ObjectID(_id)
+            _id: ObjectId(_id)
         }).toArray();
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 /**
@@ -107,22 +115,16 @@ async function showDocumentByID(database, collection, _id) {
  * @returns 
  */
 async function updateDocumentByID(database, collection, _id, new_update) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
-        const coll = monggodb.db(database).collection(collection);
+    return await MongoConnect(async mongodb => {
+        const coll = mongodb.db(database).collection(collection);
         return await coll.updateOne({
-            _id: ObjectID(_id),
+            _id: ObjectId(_id),
         }, {
             $set: {
                 ...new_update,
             },
         });
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 /**
@@ -134,11 +136,8 @@ async function updateDocumentByID(database, collection, _id, new_update) {
  * @returns 
  */
 async function updateDocumentByObject(database, collection, select_object, new_update) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
-        const coll = monggodb.db(database).collection(collection);
+    return await MongoConnect(async mongodb => {
+        const coll = mongodb.db(database).collection(collection);
         return await coll.updateOne({
             ...select_object,
         }, {
@@ -146,10 +145,7 @@ async function updateDocumentByObject(database, collection, select_object, new_u
                 ...new_update,
             },
         });
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 /**
@@ -160,11 +156,8 @@ async function updateDocumentByObject(database, collection, select_object, new_u
  * @returns 
  */
 async function deleteDocumentByID(database, collection, _id) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
-        const coll = monggodb.db(database).collection(collection);
+    return await MongoConnect(async mongodb => {
+        const coll = mongodb.db(database).collection(collection);
         if (
             typeof _id === 'object' &&
             !Array.isArray(_id) &&
@@ -176,16 +169,13 @@ async function deleteDocumentByID(database, collection, _id) {
         } else {
             if (typeof _id === "string") {
                 return await coll.deleteOne({
-                    _id: ObjectID(_id),
+                    _id: ObjectId(_id),
                 });
             } else {
                 return false;
             }
         }
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 /**
@@ -195,21 +185,17 @@ async function deleteDocumentByID(database, collection, _id) {
  * @returns 
  */
 async function clearCollection(database, collection) {
-    const monggodb = new MongoClient(config.database.mongodb.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    try {
-        await monggodb.connect();
-        //
-        const coll = monggodb.db(database).collection(collection);
+    return await MongoConnect(async mongodb => {
+        const coll = mongodb.db(database).collection(collection);
         const result = await coll.remove({})
         global[collection] = [];
         return result;
-    } finally {
-        // Ensures that the monggodb will close when you finish/error
-        await monggodb.close();
-    }
+    })
 }
 
 module.exports = {
+    MongoConnect,
+
     insertDocument,
     showCollection,
     showDocumentByID,

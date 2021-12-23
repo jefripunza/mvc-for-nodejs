@@ -10,13 +10,41 @@ module.exports = (app, from, routes) => {
     for (let i = 0; i < routes.length; i++) {
         const route = routes[i];
         if (route.method === "get") {
-            router.get(route.path, route.render)
+            if (route.middleware) {
+                router.get(route.path, route.middleware, route.render)
+            } else {
+                router.get(route.path, route.render)
+            }
         } else if (route.method === "post") {
-            router.post(route.path, route.render)
+            if (route.middleware) {
+                router.post(route.path, route.middleware, route.render)
+            } else {
+                router.post(route.path, route.render)
+            }
         } else if (route.method === "put") {
-            router.put(route.path, route.render)
+            if (route.middleware) {
+                router.put(route.path, route.middleware, route.render)
+            } else {
+                router.put(route.path, route.render)
+            }
         } else if (route.method === "delete") {
-            router.delete(route.path, route.render)
+            if (route.middleware) {
+                router.delete(route.path, route.middleware, route.render)
+            } else {
+                router.delete(route.path, route.render)
+            }
+        } else if (route.method === "patch") {
+            if (route.middleware) {
+                router.patch(route.path, route.middleware, route.render)
+            } else {
+                router.patch(route.path, route.render)
+            }
+        } else if (route.method === "options") {
+            if (route.middleware) {
+                router.options(route.path, route.middleware, route.render)
+            } else {
+                router.options(route.path, route.render)
+            }
         }
     }
 

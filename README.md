@@ -38,8 +38,6 @@ Blablablablablablablablablablablablablablablablablablablablablablabla....
 <b></b>
 
 
-
-
 ## Preparation
 
 Tidak terlalu rumit untuk inisial awal, cukup copy saja file <b>connection.js</b> nya kedalam project anda lalu di import dan langsung bisa digunakan

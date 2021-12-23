@@ -1,5 +1,6 @@
 module.exports = (app) => {
-    const controllers = require('../controllers'); // change your controllers
+    const controllers = require('../controllers/website'); // change your controllers
+    // add your private middleware
     require("../utils/createRouter")(app, "/", [
         {
             path: "/",
