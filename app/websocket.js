@@ -1,17 +1,27 @@
+const path = require('path');
+const fs = require('fs');
 
 /**
  * 
- * @param {*} app 
- * @param {*} webserver 
+ * @param {{ app:any, webserver:any, debug:boolean }} param0 
  * @returns 
  */
-module.exports = (app, webserver) => {
+module.exports = ({ app, webserver, debug = false }) => {
     const socket = require("socket.io");
     // Socket setup
     const io = socket(webserver);
+    if (debug) {
+        console.log("Websocket ready!")
+    }
 
-    io.on("connection", function (socket) {
-        console.log("new socket connection");
+    const directoryPath = path.join(__dirname, '..', "websocket");
+    fs.readdir(directoryPath, function (err, files) {
+        if (err) {
+            return console.log('Unable to scan directory: ' + err);
+        }
+        files.forEach(function (files_socket) {
+            require("../websocket/" + files_socket)(io, debug)
+        });
     });
 
     app.use((req, res, next) => { // .htaccess replacement

@@ -9,13 +9,17 @@
     "author": "Jefri Herdi Triyanto",
     "license": "ISC",
     "dependencies": {
+        "@adiwajshing/baileys": "^3.5.3",
         "dotenv": "^10.0.0",
         "ejs": "^3.1.6",
         "express": "^4.17.1",
+        "google-tts-api": "^2.0.2",
         "helmet": "^4.6.0",
         "mongodb": "^4.2.1",
         "morgan": "^1.10.0",
         "mysql": "^2.18.1",
+        "node-emoji": "^1.11.0",
+        "node-fetch": "^3.1.0",
         "pg": "^8.7.1",
         "socket.io": "^4.4.0"
     }

@@ -4,7 +4,7 @@ const router = require('express').Router();
  * 
  * @param {*} app 
  * @param {String} from 
- * @param {Array} routes 
+ * @param {[{ path:string, method:string, middleware:function, render:function }]} routes 
  */
 module.exports = (app, from, routes) => {
     for (let i = 0; i < routes.length; i++) {

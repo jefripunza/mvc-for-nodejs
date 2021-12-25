@@ -4,27 +4,14 @@ const env = process.env.NODE_ENV
 const isProduction = env === "production"
 
 const app = {
-    app_name: "NodeJS MVC Example",
+    app_name: "MVC for NodeJS",
     port: process.env.PORT || 5000,
     host: "0.0.0.0",
     local_ip,
 }
 
 const website = {
-    add_title: " | " + app.app_name,
-}
-
-const database = {
-    mysql: {
-        servername: "",
-        username: "",
-        password: "",
-        dbname: "",
-    },
-    mongodb: {
-        uri: "",
-        dbname: "",
-    },
+    plus_title: " | " + app.app_name,
 }
 
 module.exports = {
@@ -32,5 +19,4 @@ module.exports = {
     isProduction,
     app,
     website,
-    database,
 }
