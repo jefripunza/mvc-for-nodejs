@@ -1,5 +1,19 @@
-
+const child_process = require('child_process')
 const { exec } = require('child_process');
+
+function execute(cmd, dirname = __dirname) {
+    return new Promise(async (resolve, reject) => {
+        child_process.exec(cmd, {
+            cwd: dirname,
+        }, (error, stdout, stderr) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(true)
+            }
+        }).stdout.pipe(process.stdout);
+    })
+}
 
 async function run() {
     const commit = process.argv
@@ -15,9 +29,7 @@ async function run() {
     console.log({ cmd, commit });
 
     try {
-        await exec(cmd, (error, stdout, stderr) => {
-    
-        });
+        await execute(cmd)
     } catch (error) {
         console.error(error)
     }
