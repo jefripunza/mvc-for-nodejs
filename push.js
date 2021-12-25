@@ -1,5 +1,4 @@
 const child_process = require('child_process')
-const { exec } = require('child_process');
 
 function execute(cmd, dirname = __dirname) {
     return new Promise(async (resolve, reject) => {
