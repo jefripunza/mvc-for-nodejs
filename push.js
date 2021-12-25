@@ -11,7 +11,7 @@ async function run() {
     const cmd = [
         "git add .",
         `git commit -am "${commit}"`,
-        "git push -u origin main",
+        "git push -u origin HEAD:master",
     ].join(" && ")
     try {
         await execute(cmd)
