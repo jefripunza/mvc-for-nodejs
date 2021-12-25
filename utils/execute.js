@@ -6,7 +6,7 @@ function execute(cmd, dirname = __dirname) {
             cwd: dirname,
         }, (error, stdout, stderr) => {
             if (error) {
-                reject(new Error(error))
+                reject(new Error({ error }))
             } else {
                 resolve(stdout)
             }
