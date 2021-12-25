@@ -39,7 +39,12 @@ class WhatsApp {
         const conn = new WAConnection();
         //
         this.conn = conn;
-        this.SESSION_NAME = path.join(__dirname, "session", SESSION_NAME);
+        const session_folder = path.join(__dirname, "session");
+        if (!fs.existsSync(session_folder)) {
+            fs.mkdirSync(session_folder);
+            console.log('session Directory Created Successfully.');
+        }
+        this.SESSION_NAME = path.join(session_folder, SESSION_NAME);
         //
         this.option = option;
         this.bot_name = option.bot_name ? option.bot_name : "*From BOT*";
