@@ -7,7 +7,7 @@ function execute(cmd, dirname = __dirname) {
             cwd: dirname,
         }, (error, stdout, stderr) => {
             if (error) {
-                reject(error)
+                reject(new Error(error))
             } else {
                 resolve(true)
             }
@@ -26,8 +26,7 @@ async function run() {
         `git commit -m "${commit}"`,
         "git push -u origin main",
     ].join(" && ")
-    console.log({ cmd, commit });
-
+    console.log({ cmd });
     try {
         await execute(cmd)
     } catch (error) {
